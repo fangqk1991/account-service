@@ -1,5 +1,4 @@
-import { AccountSimpleParams, CarrierType, ValidateUtils, VisitorCoreInfo } from './models'
-import { makeUUID } from '@fangcha/tools'
+import { CarrierType, VisitorCoreInfo } from './models'
 import * as bcrypt from 'bcrypt'
 import AppError from '@fangcha/app-error'
 import { __Account } from './__Account'
@@ -20,37 +19,6 @@ export class _Account extends __Account {
 
   public getClass() {
     return this.constructor as typeof _Account
-  }
-
-  public static async findWithAccountUid(accountUid: string) {
-    return (await this.findOne({
-      account_uid: accountUid,
-    }))!
-  }
-
-  public static async createAccount(fullParams: AccountSimpleParams) {
-    fullParams = ValidateUtils.makePureEmailPasswordParams(fullParams)
-
-    const accountV2 = new this()
-    accountV2.accountUid = makeUUID()
-    accountV2.password = bcrypt.hashSync(fullParams.password || makeUUID(), bcrypt.genSaltSync())
-    accountV2.isEnabled = 1
-    accountV2.registerIp = ''
-
-    const carrier = new this.AccountCarrier()
-    carrier.carrierType = CarrierType.Email
-    carrier.carrierUid = fullParams.email || ''
-    carrier.accountUid = accountV2.accountUid
-    if (await carrier.checkExistsInDB()) {
-      throw new AppError('Email has been registered', 400)
-    }
-
-    const runner = await accountV2.dbSpec().database.createTransactionRunner()
-    await runner.commit(async (transaction) => {
-      await accountV2.addToDB(transaction)
-      await carrier.addToDB(transaction)
-    })
-    return accountV2
   }
 
   public assertPasswordCorrect(password: string) {
