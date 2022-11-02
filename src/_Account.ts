@@ -1,126 +1,76 @@
-import { DBObserver, FeedBase } from 'fc-feed'
+import { AccountSimpleParams, CarrierType, ValidateUtils, VisitorCoreInfo } from './models'
+import { makeUUID } from '@fangcha/tools'
+import * as bcrypt from 'bcrypt'
+import AppError from '@fangcha/app-error'
+import { __Account } from './__Account'
+import { _AccountCarrier } from './_AccountCarrier'
 import { DBProtocolV2, FCDatabase } from 'fc-sql'
 
-const _cols: string[] = [
-  // prettier-ignore
-  'account_uid',
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
-  'create_time',
-  'update_time',
-]
-const _insertableCols: string[] = [
-  // prettier-ignore
-  'account_uid',
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
-]
-const _modifiableCols: string[] = [
-  // prettier-ignore
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
-  'create_time',
-]
+export class _Account extends __Account {
+  public static AccountCarrier: typeof _AccountCarrier
 
-const _timestampTypeCols: string[] = [
-  // prettier-ignore
-  'create_time',
-  'update_time',
-]
-
-const dbOptions = {
-  table: 'fc_account',
-  primaryKey: 'account_uid',
-  cols: _cols,
-  insertableCols: _insertableCols,
-  modifiableCols: _modifiableCols,
-  timestampTypeCols: _timestampTypeCols,
-}
-
-export class _Account extends FeedBase {
-  /**
-   * @description [char(32)] 账号 UUID，具备唯一性
-   */
-  public accountUid!: string
-  /**
-   * @description [varchar(64)] bcrypt.hash(password, salt)
-   */
-  public password!: string
-  /**
-   * @description [tinyint] 是否可用
-   */
-  public isEnabled!: number
-  /**
-   * @description [varchar(64)] 昵称
-   */
-  public nickName!: string
-  /**
-   * @description [varchar(64)] 注册 IP 地址
-   */
-  public registerIp!: string
-  /**
-   * @description [timestamp] 创建时间
-   */
-  public createTime!: string
-  /**
-   * @description [timestamp] 更新时间
-   */
-  public updateTime!: string
-
-  protected static _staticDBOptions: DBProtocolV2
-  protected static _staticDBObserver?: DBObserver
-
-  public static setDatabase(database: FCDatabase, dbObserver?: DBObserver) {
-    this.addStaticOptions({ database: database }, dbObserver)
-  }
-
-  public static setStaticProtocol(protocol: Partial<DBProtocolV2>, dbObserver?: DBObserver) {
-    this._staticDBOptions = Object.assign({}, dbOptions, protocol) as DBProtocolV2
-    this._staticDBObserver = dbObserver
-    this._onStaticDBOptionsUpdate(this._staticDBOptions)
-  }
-
-  public static addStaticOptions(protocol: Partial<DBProtocolV2>, dbObserver?: DBObserver) {
-    this._staticDBOptions = Object.assign({}, dbOptions, this._staticDBOptions, protocol) as DBProtocolV2
-    this._staticDBObserver = dbObserver
-    this._onStaticDBOptionsUpdate(this._staticDBOptions)
-  }
-
-  public static _onStaticDBOptionsUpdate(_protocol: DBProtocolV2) {}
-
-  public constructor() {
-    super()
-    this.setDBProtocolV2(this.constructor['_staticDBOptions'])
-    this._reloadOnAdded = true
-    this._reloadOnUpdated = true
-    if (this.constructor['_staticDBObserver']) {
-      this.dbObserver = this.constructor['_staticDBObserver']
+  public static _onStaticDBOptionsUpdate(protocol: DBProtocolV2) {
+    if (protocol) {
+      const database = protocol.database as FCDatabase
+      class AccountCarrier extends _AccountCarrier {}
+      this.AccountCarrier = AccountCarrier
+      this.AccountCarrier.setDatabase(database)
     }
   }
 
-  public fc_defaultInit() {
-    // This function is invoked by constructor of FCModel
-    this.password = ''
-    this.isEnabled = 1
-    this.nickName = ''
-    this.registerIp = ''
+  public getClass() {
+    return this.constructor as typeof _Account
   }
 
-  public fc_propertyMapper() {
+  public static async findWithAccountUid(accountUid: string) {
+    return (await this.findOne({
+      account_uid: accountUid,
+    }))!
+  }
+
+  public static async createAccount(fullParams: AccountSimpleParams) {
+    fullParams = ValidateUtils.makePureEmailPasswordParams(fullParams)
+
+    const accountV2 = new this()
+    accountV2.accountUid = makeUUID()
+    accountV2.password = bcrypt.hashSync(fullParams.password || makeUUID(), bcrypt.genSaltSync())
+    accountV2.isEnabled = 1
+    accountV2.registerIp = ''
+
+    const carrier = new this.AccountCarrier()
+    carrier.carrierType = CarrierType.Email
+    carrier.carrierUid = fullParams.email || ''
+    carrier.accountUid = accountV2.accountUid
+    if (await carrier.checkExistsInDB()) {
+      throw new AppError('Email has been registered', 400)
+    }
+
+    const runner = await accountV2.dbSpec().database.createTransactionRunner()
+    await runner.commit(async (transaction) => {
+      await accountV2.addToDB(transaction)
+      await carrier.addToDB(transaction)
+    })
+    return accountV2
+  }
+
+  public assertPasswordCorrect(password: string) {
+    if (!bcrypt.compareSync(password, this.password)) {
+      throw new AppError('Password incorrect', 400)
+    }
+  }
+
+  public async findCarrier(carrierType: CarrierType) {
+    return (await this.getClass().AccountCarrier.findOne({
+      account_uid: this.accountUid,
+      carrier_type: carrierType,
+    }))!
+  }
+
+  public async getVisitorCoreInfo(): Promise<VisitorCoreInfo> {
+    const carrier = await this.findCarrier(CarrierType.Email)
     return {
-      accountUid: 'account_uid',
-      password: 'password',
-      isEnabled: 'is_enabled',
-      nickName: 'nick_name',
-      registerIp: 'register_ip',
-      createTime: 'create_time',
-      updateTime: 'update_time',
+      accountUid: this.accountUid,
+      email: carrier ? carrier.carrierUid : '',
     }
   }
 }
