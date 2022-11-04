@@ -1,9 +1,9 @@
-import { CarrierType, VisitorCoreInfo } from './common/models'
+import { __Account } from '../auto-build/__Account'
+import { DBProtocolV2, FCDatabase } from 'fc-sql'
 import * as bcrypt from 'bcrypt'
 import AppError from '@fangcha/app-error'
-import { __Account } from './__Account'
+import { CarrierType, VisitorCoreInfo } from '../../common/models'
 import { _AccountCarrier } from './_AccountCarrier'
-import { DBProtocolV2, FCDatabase } from 'fc-sql'
 
 export class _Account extends __Account {
   public static AccountCarrier: typeof _AccountCarrier

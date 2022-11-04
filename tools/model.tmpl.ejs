@@ -3,75 +3,45 @@ import { DBProtocolV2, FCDatabase } from 'fc-sql'
 
 const _cols: string[] = [
   // prettier-ignore
-  'account_uid',
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
-  'create_time',
-  'update_time',
+<% sqlCols.forEach((item) => { -%>
+  '<%-item.columnName%>',
+<% }) -%>
 ]
 const _insertableCols: string[] = [
   // prettier-ignore
-  'account_uid',
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
+<% sqlCols.filter((item) => item.insertable).forEach((item) => { -%>
+  '<%-item.columnName%>',
+<% }) -%>
 ]
 const _modifiableCols: string[] = [
   // prettier-ignore
-  'password',
-  'is_enabled',
-  'nick_name',
-  'register_ip',
-  'create_time',
+<% sqlCols.filter((item) => item.modifiable).forEach((item) => { -%>
+  '<%-item.columnName%>',
+<% }) -%>
 ]
-
 const _timestampTypeCols: string[] = [
   // prettier-ignore
-  'create_time',
-  'update_time',
+<% sqlCols.filter((item) => item.isTimestamp).forEach((item) => { -%>
+  '<%-item.columnName%>',
+<% }) -%>
 ]
 
 const dbOptions = {
-  table: 'fc_account',
-  primaryKey: 'account_uid',
+  table: '<%-tableName%>',
+  primaryKey: <%-decoratePrimaryKey(primaryKey)%>,
   cols: _cols,
   insertableCols: _insertableCols,
   modifiableCols: _modifiableCols,
   timestampTypeCols: _timestampTypeCols,
 }
 
-export class __Account extends FeedBase {
+export class <%-className%> extends FeedBase {
+<% sqlCols.forEach((item) => { -%>
   /**
-   * @description [char(32)] 账号 UUID，具备唯一性
+   * @description <%-item.propDescription%>
    */
-  public accountUid!: string
-  /**
-   * @description [varchar(64)] bcrypt.hash(password, salt)
-   */
-  public password!: string
-  /**
-   * @description [tinyint] 是否可用
-   */
-  public isEnabled!: number
-  /**
-   * @description [varchar(64)] 昵称
-   */
-  public nickName!: string
-  /**
-   * @description [varchar(64)] 注册 IP 地址
-   */
-  public registerIp!: string
-  /**
-   * @description [timestamp] 创建时间
-   */
-  public createTime!: string
-  /**
-   * @description [timestamp] 更新时间
-   */
-  public updateTime!: string
+  public <%-getPropName(item.columnName)%>!: <%-item.columnType%>
+<% }) -%>
 
   protected static _staticDBOptions: DBProtocolV2
   protected static _staticDBObserver?: DBObserver
@@ -97,8 +67,12 @@ export class __Account extends FeedBase {
   public constructor() {
     super()
     this.setDBProtocolV2(this.constructor['_staticDBOptions'])
+<% if (reloadOnAdded) { -%>
     this._reloadOnAdded = true
+<% } -%>
+<% if (reloadOnUpdated) { -%>
     this._reloadOnUpdated = true
+<% } -%>
     if (this.constructor['_staticDBObserver']) {
       this.dbObserver = this.constructor['_staticDBObserver']
     }
@@ -106,21 +80,16 @@ export class __Account extends FeedBase {
 
   public fc_defaultInit() {
     // This function is invoked by constructor of FCModel
-    this.password = ''
-    this.isEnabled = 1
-    this.nickName = ''
-    this.registerIp = ''
+<% sqlCols.filter((item) => item.hasDefValue).forEach((item) => { -%>
+    this.<%-getPropName(item.columnName)%> = <%-decoratePrimaryKey(item.defValue)%>
+<% }) -%>
   }
 
   public fc_propertyMapper() {
     return {
-      accountUid: 'account_uid',
-      password: 'password',
-      isEnabled: 'is_enabled',
-      nickName: 'nick_name',
-      registerIp: 'register_ip',
-      createTime: 'create_time',
-      updateTime: 'update_time',
+<% sqlCols.forEach((item) => { -%>
+      <%-getPropName(item.columnName)%>: '<%-item.columnName%>',
+<% }) -%>
     }
   }
 }

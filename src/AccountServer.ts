@@ -1,11 +1,11 @@
 import { FCDatabase } from 'fc-sql'
-import { _Account } from './_Account'
-import { _AccountCarrier } from './_AccountCarrier'
-import { _AccountCarrierExtras } from './_AccountCarrierExtras'
 import { AccountSimpleParams, CarrierType, ValidateUtils } from './common/models'
 import { makeUUID } from '@fangcha/tools'
 import * as bcrypt from 'bcrypt'
 import AppError from '@fangcha/app-error'
+import { _Account } from './models/account/_Account'
+import { _AccountCarrier } from './models/account/_AccountCarrier'
+import { _AccountCarrierExtras } from './models/account/_AccountCarrierExtras'
 
 export class AccountServer {
   public readonly database: FCDatabase

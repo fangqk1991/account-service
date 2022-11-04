@@ -5,7 +5,7 @@ const _cols: string[] = [
   // prettier-ignore
   'carrier_uid',
   'carrier_type',
-  'account_uid',
+  'extras_info',
   'create_time',
   'update_time',
 ]
@@ -13,16 +13,15 @@ const _insertableCols: string[] = [
   // prettier-ignore
   'carrier_uid',
   'carrier_type',
-  'account_uid',
+  'extras_info',
 ]
 const _modifiableCols: string[] = [
   // prettier-ignore
   'carrier_uid',
   'carrier_type',
-  'account_uid',
+  'extras_info',
   'create_time',
 ]
-
 const _timestampTypeCols: string[] = [
   // prettier-ignore
   'create_time',
@@ -30,7 +29,7 @@ const _timestampTypeCols: string[] = [
 ]
 
 const dbOptions = {
-  table: 'fc_account_carrier',
+  table: 'fc_account_carrier_extras',
   primaryKey: ['carrier_uid', 'carrier_type'],
   cols: _cols,
   insertableCols: _insertableCols,
@@ -38,19 +37,19 @@ const dbOptions = {
   timestampTypeCols: _timestampTypeCols,
 }
 
-export class __AccountCarrier extends FeedBase {
+export class __AccountCarrierExtras extends FeedBase {
   /**
    * @description [varchar(64)] 载体 ID
    */
   public carrierUid!: string
   /**
-   * @description 账号载体（登录方式）
+   * @description [varchar(16)] 账号载体（登录方式）
    */
   public carrierType!: string
   /**
-   * @description [char(32)] 账号 UUID，-> account_v2.account_uid
+   * @description [mediumtext] 附加信息
    */
-  public accountUid!: string
+  public extrasInfo!: string
   /**
    * @description [timestamp] 创建时间
    */
@@ -93,13 +92,14 @@ export class __AccountCarrier extends FeedBase {
 
   public fc_defaultInit() {
     // This function is invoked by constructor of FCModel
+    this.extrasInfo = ''
   }
 
   public fc_propertyMapper() {
     return {
       carrierUid: 'carrier_uid',
       carrierType: 'carrier_type',
-      accountUid: 'account_uid',
+      extrasInfo: 'extras_info',
       createTime: 'create_time',
       updateTime: 'update_time',
     }

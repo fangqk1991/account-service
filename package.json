@@ -6,7 +6,8 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "test": "nyc mocha --require ts-node/register tests/**/*.test.ts --timeout 1000000 --exit",
-    "build": "rm -rf ./lib/ && tsc"
+    "build": "rm -rf ./lib/ && tsc",
+    "rebuild-models": "ts-node ./tools/rebuild-models.ts"
   },
   "repository": "https://github.com/fangqk1991/account-service.git",
   "keywords": [

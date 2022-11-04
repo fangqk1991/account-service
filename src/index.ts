@@ -1,3 +1,3 @@
 export * from './AccountServer'
-export * from './_Account'
-export * from './_AccountCarrier'
+export * from './models/account/_Account'
+export * from './models/account/_AccountCarrier'
