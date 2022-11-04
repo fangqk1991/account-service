@@ -1,7 +1,7 @@
 import { __Account } from '../auto-build/__Account'
 import * as bcrypt from 'bcrypt'
-import AppError from '@fangcha/app-error'
-import { CarrierType, VisitorCoreInfo } from '../../common/models'
+import { AppException } from '@fangcha/app-error'
+import { AccountErrorPhrase, CarrierType, VisitorCoreInfo } from '../../common/models'
 import { _AccountCarrier } from './_AccountCarrier'
 
 export class _Account extends __Account {
@@ -13,7 +13,7 @@ export class _Account extends __Account {
 
   public assertPasswordCorrect(password: string) {
     if (!bcrypt.compareSync(password, this.password)) {
-      throw new AppError('Password incorrect', 400)
+      throw AppException.exception(AccountErrorPhrase.PasswordIncorrect)
     }
   }
 

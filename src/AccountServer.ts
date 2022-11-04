@@ -1,8 +1,8 @@
 import { FCDatabase } from 'fc-sql'
-import { AccountSimpleParams, CarrierType, ValidateUtils } from './common/models'
+import { AccountErrorPhrase, AccountSimpleParams, CarrierType, ValidateUtils } from './common/models'
 import { makeUUID } from '@fangcha/tools'
 import * as bcrypt from 'bcrypt'
-import AppError from '@fangcha/app-error'
+import { AppException } from '@fangcha/app-error'
 import { _Account } from './models/account/_Account'
 import { _AccountCarrier } from './models/account/_AccountCarrier'
 import { _AccountCarrierExtras } from './models/account/_AccountCarrierExtras'
@@ -73,7 +73,7 @@ export class AccountServer {
     carrier.carrierUid = fullParams.email || ''
     carrier.accountUid = accountV2.accountUid
     if (await carrier.checkExistsInDB()) {
-      throw new AppError('Email has been registered', 400)
+      throw AppException.exception(AccountErrorPhrase.EmailAlreadyRegistered)
     }
 
     const runner = await accountV2.dbSpec().database.createTransactionRunner()

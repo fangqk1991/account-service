@@ -1,5 +1,6 @@
-import AppError from '@fangcha/app-error'
+import { AppException } from '@fangcha/app-error'
 import { AccountSimpleParams } from './AccountCoreModels'
+import { AccountErrorPhrase } from './AccountErrorPhrase'
 
 export class ValidateUtils {
   public static validateEmail(email: string) {
@@ -12,14 +13,14 @@ export class ValidateUtils {
 
   public static makePureEmailPasswordParams(params: AccountSimpleParams) {
     if (!params.email) {
-      throw new AppError('Email incorrect', 400)
+      throw AppException.exception(AccountErrorPhrase.EmailIncorrect)
     }
     params.email = params.email.trim()
     if (!ValidateUtils.validateEmail(params.email)) {
-      throw new AppError('Email incorrect', 400)
+      throw AppException.exception(AccountErrorPhrase.EmailIncorrect)
     }
     if (!params.password) {
-      throw new AppError('Password invalid', 400)
+      throw AppException.exception(AccountErrorPhrase.PasswordInvalid)
     }
     return params
   }
