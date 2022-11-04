@@ -1,4 +1,4 @@
-import { CarrierType, VisitorCoreInfo } from './models'
+import { CarrierType, VisitorCoreInfo } from './common/models'
 import * as bcrypt from 'bcrypt'
 import AppError from '@fangcha/app-error'
 import { __Account } from './__Account'
