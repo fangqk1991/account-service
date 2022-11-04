@@ -7,25 +7,42 @@ import { _Account } from './models/account/_Account'
 import { _AccountCarrier } from './models/account/_AccountCarrier'
 import { _AccountCarrierExtras } from './models/account/_AccountCarrierExtras'
 
+interface Options {
+  database: FCDatabase
+  tableName_Account?: string
+  tableName_AccountCarrier?: string
+  tableName_AccountCarrierExtras?: string
+}
+
 export class AccountServer {
   public readonly database: FCDatabase
   public readonly Account!: { new (): _Account } & typeof _Account
   public readonly AccountCarrier!: { new (): _AccountCarrier } & typeof _AccountCarrier
   public readonly AccountCarrierExtras!: { new (): _AccountCarrierExtras } & typeof _AccountCarrierExtras
 
-  constructor(database: FCDatabase) {
-    this.database = database
-
-    class Account extends _Account {}
-    Account.setDatabase(database)
-    this.Account = Account
+  constructor(options: Options) {
+    this.database = options.database
 
     class AccountCarrier extends _AccountCarrier {}
-    AccountCarrier.setDatabase(database)
+    AccountCarrier.addStaticOptions({
+      database: options.database,
+      table: options.tableName_AccountCarrier || 'fc_account_carrier',
+    })
     this.AccountCarrier = AccountCarrier
 
+    class Account extends _Account {}
+    Account.addStaticOptions({
+      database: options.database,
+      table: options.tableName_Account || 'fc_account',
+    })
+    Account.AccountCarrier = AccountCarrier
+    this.Account = Account
+
     class AccountCarrierExtras extends _AccountCarrierExtras {}
-    AccountCarrierExtras.setDatabase(database)
+    AccountCarrierExtras.addStaticOptions({
+      database: options.database,
+      table: options.tableName_AccountCarrierExtras || 'fc_account_carrier_extras',
+    })
     this.AccountCarrierExtras = AccountCarrierExtras
   }
 

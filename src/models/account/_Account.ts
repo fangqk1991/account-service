@@ -1,5 +1,4 @@
 import { __Account } from '../auto-build/__Account'
-import { DBProtocolV2, FCDatabase } from 'fc-sql'
 import * as bcrypt from 'bcrypt'
 import AppError from '@fangcha/app-error'
 import { CarrierType, VisitorCoreInfo } from '../../common/models'
@@ -7,15 +6,6 @@ import { _AccountCarrier } from './_AccountCarrier'
 
 export class _Account extends __Account {
   public static AccountCarrier: typeof _AccountCarrier
-
-  public static _onStaticDBOptionsUpdate(protocol: DBProtocolV2) {
-    if (protocol) {
-      const database = protocol.database as FCDatabase
-      class AccountCarrier extends _AccountCarrier {}
-      this.AccountCarrier = AccountCarrier
-      this.AccountCarrier.setDatabase(database)
-    }
-  }
 
   public getClass() {
     return this.constructor as typeof _Account
