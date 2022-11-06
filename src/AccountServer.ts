@@ -9,8 +9,14 @@ import { _AccountCarrierExtras } from './models/account/_AccountCarrierExtras'
 
 interface Options {
   database: FCDatabase
+
+  // Default: fc_account
   tableName_Account?: string
+
+  // Default: fc_account_carrier
   tableName_AccountCarrier?: string
+
+  // Default: fc_account_carrier_extras
   tableName_AccountCarrierExtras?: string
 }
 
