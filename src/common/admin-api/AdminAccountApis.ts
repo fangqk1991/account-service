@@ -16,9 +16,14 @@ export const AdminAccountApis = {
     route: '/api/v1/account/:accountUid/reset-password',
     description: 'Account Password Reset',
   } as Api,
-  AccountDelete: {
+  AccountCarrierUpdate: {
+    method: 'PUT',
+    route: '/api/v1/account/:accountUid/carrier/:accountCarrier',
+    description: 'Account Carrier Update',
+  } as Api,
+  AccountCarrierUnlink: {
     method: 'DELETE',
-    route: '/api/v1/account/:accountUid',
-    description: 'Account Delete',
+    route: '/api/v1/account/:accountUid/carrier/:accountCarrier',
+    description: 'Account Carrier Delete',
   } as Api,
 }
