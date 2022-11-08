@@ -32,10 +32,7 @@ factory.prepare(AdminAccountApis.AccountCarrierUpdate, async (ctx) => {
   const accountUid = ctx.params.accountUid
   const account = await MyAccountServer.findAccount(accountUid)
   assert.ok(!!account, `Account[${accountUid}] not exists`)
-  const carrier = await account.findCarrier(CarrierType.Email)
-  carrier.fc_edit()
-  carrier.carrierUid = carrierUid
-  await carrier.updateToDB()
+  await account.updateCarrier(CarrierType.Email, carrierUid)
   ctx.status = 200
 })
 
