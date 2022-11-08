@@ -1,7 +1,7 @@
 import { __Account } from '../auto-build/__Account'
 import * as bcrypt from 'bcrypt'
 import { AppException } from '@fangcha/app-error'
-import { AccountErrorPhrase, CarrierType, VisitorCoreInfo } from '../../common/models'
+import { AccountErrorPhrase, AccountModel, CarrierType, VisitorCoreInfo } from '../../common/models'
 import { _AccountCarrier } from './_AccountCarrier'
 
 export class _Account extends __Account {
@@ -30,5 +30,15 @@ export class _Account extends __Account {
       accountUid: this.accountUid,
       email: carrier ? carrier.carrierUid : '',
     }
+  }
+
+  public modelForClient() {
+    const data = this.fc_pureModel() as AccountModel
+    data.password = '***'
+    return data
+  }
+
+  public toJSON() {
+    return this.modelForClient()
   }
 }

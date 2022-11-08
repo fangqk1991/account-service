@@ -5,4 +5,9 @@ describe('Test AccountFeeds.test.ts', () => {
     const pageResult = await MyAccountServer.Account.getPageResult()
     console.info(pageResult)
   })
+
+  it(`FullAccount.getPageResult`, async () => {
+    const pageResult = await MyAccountServer.FullAccount.getPageResult()
+    console.info(pageResult)
+  })
 })

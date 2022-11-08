@@ -6,6 +6,7 @@ import { AppException } from '@fangcha/app-error'
 import { _Account } from './models/account/_Account'
 import { _AccountCarrier } from './models/account/_AccountCarrier'
 import { _AccountCarrierExtras } from './models/account/_AccountCarrierExtras'
+import { _FullAccount } from './models/account/_FullAccount'
 
 interface Options {
   database: FCDatabase
@@ -21,25 +22,37 @@ interface Options {
 }
 
 export class AccountServer {
+  public readonly options: Options
   public readonly database: FCDatabase
   public readonly Account!: { new (): _Account } & typeof _Account
   public readonly AccountCarrier!: { new (): _AccountCarrier } & typeof _AccountCarrier
   public readonly AccountCarrierExtras!: { new (): _AccountCarrierExtras } & typeof _AccountCarrierExtras
+  public readonly FullAccount!: { new (): _FullAccount } & typeof _FullAccount
+
+  private readonly tableName_Account: string
+  private readonly tableName_AccountCarrier: string
+  private readonly tableName_AccountCarrierExtras: string
 
   constructor(options: Options) {
+    this.options = options
+
     this.database = options.database
+
+    this.tableName_Account = options.tableName_Account || 'fc_account'
+    this.tableName_AccountCarrier = options.tableName_AccountCarrier || 'fc_account_carrier'
+    this.tableName_AccountCarrierExtras = options.tableName_AccountCarrierExtras || 'fc_account_carrier_extras'
 
     class AccountCarrier extends _AccountCarrier {}
     AccountCarrier.addStaticOptions({
       database: options.database,
-      table: options.tableName_AccountCarrier || 'fc_account_carrier',
+      table: this.tableName_AccountCarrier,
     })
     this.AccountCarrier = AccountCarrier
 
     class Account extends _Account {}
     Account.addStaticOptions({
       database: options.database,
-      table: options.tableName_Account || 'fc_account',
+      table: this.tableName_Account,
     })
     Account.AccountCarrier = AccountCarrier
     this.Account = Account
@@ -47,9 +60,21 @@ export class AccountServer {
     class AccountCarrierExtras extends _AccountCarrierExtras {}
     AccountCarrierExtras.addStaticOptions({
       database: options.database,
-      table: options.tableName_AccountCarrierExtras || 'fc_account_carrier_extras',
+      table: this.tableName_AccountCarrierExtras,
     })
     this.AccountCarrierExtras = AccountCarrierExtras
+
+    class FullAccount extends _FullAccount {}
+    FullAccount.setOptions(
+      options.database,
+      `${this.tableName_Account} AS account
+      LEFT JOIN ${this.tableName_AccountCarrier} AS email_carrier
+      ON account.account_uid = email_carrier.account_uid AND email_carrier.carrier_type = "${CarrierType.Email}"
+      LEFT JOIN ${this.tableName_AccountCarrier} AS phone_carrier
+      ON account.account_uid = email_carrier.account_uid AND email_carrier.carrier_type = "${CarrierType.Phone}"
+      `
+    )
+    this.FullAccount = FullAccount
   }
 
   public async findAccount(accountUid: string) {
