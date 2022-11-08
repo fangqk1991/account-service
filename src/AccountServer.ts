@@ -90,12 +90,22 @@ export class AccountServer {
     }))!
   }
 
+  public makeSaltedPassword(password: string) {
+    return bcrypt.hashSync(password || makeUUID(), bcrypt.genSaltSync())
+  }
+
+  public async updateAccountPassword(account: _Account, newPassword: string) {
+    account.fc_edit()
+    account.password = this.makeSaltedPassword(newPassword)
+    await account.updateToDB()
+  }
+
   public async createAccount(fullParams: AccountSimpleParams) {
     fullParams = ValidateUtils.makePureEmailPasswordParams(fullParams)
 
     const accountV2 = new this.Account()
     accountV2.accountUid = makeUUID()
-    accountV2.password = bcrypt.hashSync(fullParams.password || makeUUID(), bcrypt.genSaltSync())
+    accountV2.password = this.makeSaltedPassword(fullParams.password)
     accountV2.isEnabled = 1
     accountV2.registerIp = ''
 

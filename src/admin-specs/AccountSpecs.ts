@@ -20,10 +20,11 @@ factory.prepare(AdminAccountApis.AccountCreate, async (ctx) => {
 
 factory.prepare(AdminAccountApis.AccountPasswordReset, async (ctx) => {
   const accountServer = ctx.accountServer as AccountServer
+  const { newPassword } = ctx.request.body
   const accountUid = ctx.params.accountUid
   const account = await accountServer.findAccount(accountUid)
   assert.ok(!!account, `Account[${accountUid}] not exists`)
-  await account.deleteFromDB()
+  await accountServer.updateAccountPassword(account, newPassword)
   ctx.status = 200
 })
 
