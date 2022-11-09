@@ -1,9 +1,9 @@
-import { RouterSdkPlugin } from '@fangcha/router/lib/sdk'
 import { RouterApp } from '@fangcha/router'
 import { AppPluginProtocol } from '@fangcha/backend-kit/lib/basic'
 import { KitProfileSpecDocItem } from '@fangcha/backend-kit/lib/profile'
 import { AccountServer } from '../AccountServer'
 import { AccountSpecDocItems } from '../admin-specs'
+import { RouterSdkPlugin } from '@fangcha/backend-kit/lib/router'
 
 export interface AccountAdminOptions {
   backendPort: number
