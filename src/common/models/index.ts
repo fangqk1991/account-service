@@ -1,4 +1,5 @@
 export * from './CarrierType'
 export * from './AccountCoreModels'
 export * from './ValidateUtils'
+export * from './AuthType'
 export * from './AccountErrorPhrase'
