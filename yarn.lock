@@ -238,10 +238,15 @@
   dependencies:
     "@fangcha/app-error" "^1.1.0"
 
-"@fangcha/backend-kit@^0.42.0":
-  version "0.42.0"
-  resolved "https://registry.yarnpkg.com/@fangcha/backend-kit/-/backend-kit-0.42.0.tgz#697e8e8c23401fac54533f75460ddb3e36304be7"
-  integrity sha512-Xi5LWCs0FttPJBzMo+V0JurJre/7GHZUuIqJLnBdf107WBPeuRqS1yz0IbFvZz57gPzdtrJsdZFcD9W720vxtQ==
+"@fangcha/backend-kit@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@fangcha/backend-kit/-/backend-kit-0.51.0.tgz#b60005c07670076961eaafdbf9b32a2fa993bd71"
+  integrity sha512-6Ggwvhpm/ZFGAd/TQGf8saMg14MptGvXr/VnnNGh1Zsi01+aOO78CJh9wtxnOuzymLiQ77g73JFt+1FRKaoXkw==
+  dependencies:
+    "@fangcha/app-error" "^1.5.0"
+    "@fangcha/app-request" "^1.6.0"
+    "@fangcha/assert" "^1.1.0"
+    "@fangcha/tools" "^1.22.0"
 
 "@fangcha/eslint@^0.3.2":
   version "0.3.2"
@@ -278,10 +283,22 @@
     lodash "^4.17.15"
     tslib "^2.3.1"
 
-"@fangcha/router@^0.22.0":
-  version "0.22.0"
-  resolved "https://registry.yarnpkg.com/@fangcha/router/-/router-0.22.0.tgz#b73cc28574f6a0a821c202c9a2fb4cd99995b752"
-  integrity sha512-039Gb1V+RvodTEpYOiAb8QXO0rE1vEz5CEGxMOOTMOC+Ss1d+XqmlBaf7Ijn5vWidLfFnIZIkG/aQAZKIZSBZw==
+"@fangcha/router@^0.25.0":
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/@fangcha/router/-/router-0.25.0.tgz#4d4c80dd0919610bb4180e5e239d857dfcd70d7a"
+  integrity sha512-lPGYbe8GiaFzp8HB/zoBmJy86OI/egKs4dfUNyNVjPy+UfdOi+v5ciVVeohDMFy5gmE3Mks6l7u4xVD5simdgA==
+  dependencies:
+    "@fangcha/app-error" "^1.5.0"
+    "@fangcha/swagger" "^0.1.1"
+    "@fangcha/tools" "^1.22.0"
+    "@koa/router" "^12.0.0"
+    "@types/jsonwebtoken" "^8.5.9"
+    "@types/koa" "2.13.5"
+    "@types/koa__router" "^12.0.0"
+    jsonwebtoken "^8.5.1"
+    koa "^2.13.4"
+    koa-body "^5.0.0"
+    koa-compose "^4.1.0"
 
 "@fangcha/swagger@^0.1.1":
   version "0.1.1"
@@ -572,7 +589,7 @@
   dependencies:
     "@types/koa" "*"
 
-"@types/koa@*", "@types/koa@^2.13.5":
+"@types/koa@*", "@types/koa@2.13.5":
   version "2.13.5"
   resolved "https://registry.yarnpkg.com/@types/koa/-/koa-2.13.5.tgz#64b3ca4d54e08c0062e89ec666c9f45443b21a61"
   integrity sha512-HSUOdzKz3by4fnqagwthW/1w/yJspTgppyyalPVbgZf8jQWvdIXcVW5h2DGtw4zYntOaeRGx49r1hxoPWrD4aA==
@@ -585,6 +602,13 @@
     "@types/keygrip" "*"
     "@types/koa-compose" "*"
     "@types/node" "*"
+
+"@types/koa__router@^12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@types/koa__router/-/koa__router-12.0.0.tgz#19b0f287f9708267dfd8842feb5f2de407d93af2"
+  integrity sha512-S6eHyZyoWCZLNHyy8j0sMW85cPrpByCbGGU2/BO4IzGiI87aHJ92lZh4E9xfsM9DcbCT469/OIqyC0sSJXSIBQ==
+  dependencies:
+    "@types/koa" "*"
 
 "@types/mime@*":
   version "3.0.1"
@@ -1769,10 +1793,10 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-fc-config@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/fc-config/-/fc-config-0.11.0.tgz#ebe5a99145ab8c79ee1e46c4acb9d7f02112e2bb"
-  integrity sha512-7H8WpQH5ZSDcFGSMgjhWvhWJ4uj8omJhTlazOHZTv60UBThbx8SaZpneqir8hZ3/XcCJof9eokaMiOLdlnx/6A==
+fc-config@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/fc-config/-/fc-config-0.13.0.tgz#b59f4e83f5fc84285adfad29f6cf00abcc70fed9"
+  integrity sha512-Jxy2Uda1v69eja0d4oyT7UNAML6Yxi7VmNreW2WR5W8ApLM52Q3pOfNl0IlPZRKRYDVXTIHVrbzFsCjaGb1SMg==
   dependencies:
     lodash "^4.17.21"
 
