@@ -3,6 +3,13 @@ export interface AccountSimpleParams {
   password: string
 }
 
+export interface AccountFullParams extends AccountSimpleParams {
+  email: string
+  password: string
+  nickName?: string
+  registerIp?: string
+}
+
 export interface VisitorCoreInfo {
   accountUid: string
   email: string
